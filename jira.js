@@ -22,10 +22,8 @@ router.post("/", function (req, res) {
         var key = response.rawHeaders[23].substring(0, 10);
         var id = response.rawHeaders[23].substring(11, 43);
 
-        res.json({
-          key: key,
-          id: id,
-        });
+        res.cookie(key + "=" + id);
+        res.json({ cookie: key + "=" + id });
         // Get the session information and store it in a cookie in the header
         var searchArgs = {
           headers: {
@@ -38,19 +36,36 @@ router.post("/", function (req, res) {
             jql: "type=Bug AND status=Closed",
           },
         };
-        // Make the request return the search results, passing the header information including the cookie.
-        client.get(
-          "http://my.octavianlab.com/jira/rest/api/2/issue/VUE-239",
-          searchArgs,
-          function (searchResult, response) {
-            console.log("status code:", response.statusCode);
-            console.log("search result:", searchResult);
-            res.json(searchResult);
-          }
-        );
       } else {
         throw "Login failed :(";
       }
+    }
+  );
+});
+
+router.get("/search", function (req, res) {
+  var Client = require("node-rest-client").Client;
+  client = new Client();
+
+  var key = "JSESSIONID";
+  var id = req.cookies["JSESSIONID"];
+  // Make the request return the search results, passing the header information including the cookie.
+  client.get(
+    `http://my.octavianlab.com/jira/rest/api/2/${req.query.type}/${req.query.id}`,
+    {
+      headers: {
+        cookie: key + "=" + id,
+        "Content-Type": "application/json",
+      },
+      data: {
+        // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
+        jql: "type=Bug AND status=Closed",
+      },
+    },
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      console.log("search result:", searchResult);
+      res.json(searchResult);
     }
   );
 });
