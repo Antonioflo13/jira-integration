@@ -17,7 +17,7 @@ router.post("/login", function (req, res) {
       if (response.statusCode == 200) {
         var key = response.rawHeaders[23].substring(0, 10);
         var id = response.rawHeaders[23].substring(11, 43);
-        res.cookie(key,id, {maxAge: 9000000000, httpOnly: true});
+        res.cookie(key, id, { maxAge: 9000000000, httpOnly: true });
         res.json({ cookie: key + "=" + id });
       } else {
         throw "Login failed :(";
@@ -30,13 +30,39 @@ router.get("/search", function (req, res) {
   var key = "JSESSIONID";
   var id = req.cookies["JSESSIONID"];
   console.log(id);
+  console.log(req.query);
+
+  // Make the request return the search results, passing the header information including the cookie.
+  client.get(
+    `http://my.octavianlab.com/jira/rest/api/2/search?${req.query.jql}&maxResults=${req.query.maxResults}`,
+    {
+      headers: {
+        cookie: key + "=" + "63162163BA042A5F2AC54840B6A5CE4A",
+        "Content-Type": "application/json",
+      },
+      data: {
+        // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
+        jql: "type=Bug AND status=Closed",
+      },
+    },
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      res.json(searchResult);
+    }
+  );
+});
+
+router.get("/searchItem", function (req, res) {
+  var key = "JSESSIONID";
+  var id = req.cookies["JSESSIONID"];
+  console.log(id);
 
   // Make the request return the search results, passing the header information including the cookie.
   client.get(
     `http://my.octavianlab.com/jira/rest/api/2/${req.query.type}/${req.query.id}`,
     {
       headers: {
-        cookie: key + "=" + 'EF62BD85691A13B63CEF413047E4EFC3',
+        cookie: key + "=" + "63162163BA042A5F2AC54840B6A5CE4A",
         "Content-Type": "application/json",
       },
       data: {
