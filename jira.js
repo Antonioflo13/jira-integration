@@ -17,7 +17,7 @@ router.post("/login", function (req, res) {
       if (response.statusCode == 200) {
         var key = response.rawHeaders[23].substring(0, 10);
         var id = response.rawHeaders[23].substring(11, 43);
-        res.cookie(key, id, { maxAge: 9000000000, httpOnly: true });
+        res.cookie("JSESSIONID", id, { maxAge: 9000000000, httpOnly: true });
         res.json({ cookie: key + "=" + id });
       } else {
         throw "Login failed :(";
@@ -26,25 +26,66 @@ router.post("/login", function (req, res) {
   );
 });
 
+router.post("/addTicket", function (req, res) {
+  const bodyData = {
+    headers: {
+      //add Basic Auth username e api token
+      Authorization: "Basic YS5mbG9yZTpNaW1tYTEzMDE5Mg==",
+      "Content-Type": "application/json",
+    },
+    data: {
+      fields: {
+        project: {
+          key: "VUE",
+        },
+        summary: "TEST TICKETING",
+        issuetype: {
+          id: "10102",
+        },
+        creator: {
+          name: "a.flore",
+        },
+        assignee: "a.flore",
+        priority: "Miglioramento",
+        description: "Test",
+        reporter: {
+          key: "a.flore",
+          name: "a.flore",
+        },
+      },
+    },
+  };
+  client.post(
+    "https://my.octavianlab.com/jira/rest/api/2/issue",
+    bodyData,
+    function (data, response) {
+      console.log(response.statusCode);
+      if (response.statusCode == 200) {
+        res.json(data);
+      } else {
+        res.json(data);
+      }
+    }
+  );
+});
+
 router.get("/search", function (req, res) {
   var key = "JSESSIONID";
   var id = req.cookies["JSESSIONID"];
-  console.log(id);
-  console.log(req.query);
-
+  var searchArgs = {
+    headers: {
+      cookie: key + "=" + id,
+      "Content-Type": "application/json",
+    },
+    parameters: {
+      // jql: req.query.jql,
+      maxResults: req.query.maxResults,
+    },
+  };
   // Make the request return the search results, passing the header information including the cookie.
   client.get(
-    `http://my.octavianlab.com/jira/rest/api/2/search?${req.query.jql}&maxResults=${req.query.maxResults}`,
-    {
-      headers: {
-        cookie: key + "=" + "63162163BA042A5F2AC54840B6A5CE4A",
-        "Content-Type": "application/json",
-      },
-      data: {
-        // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
-        jql: "type=Bug AND status=Closed",
-      },
-    },
+    `http://my.octavianlab.com/jira/rest/api/2/search`,
+    searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
       res.json(searchResult);
@@ -52,7 +93,7 @@ router.get("/search", function (req, res) {
   );
 });
 
-router.get("/searchItem", function (req, res) {
+router.get("/searchItem", (req, res) => {
   var key = "JSESSIONID";
   var id = req.cookies["JSESSIONID"];
   console.log(id);
@@ -62,17 +103,12 @@ router.get("/searchItem", function (req, res) {
     `http://my.octavianlab.com/jira/rest/api/2/${req.query.type}/${req.query.id}`,
     {
       headers: {
-        cookie: key + "=" + "63162163BA042A5F2AC54840B6A5CE4A",
+        cookie: key + "=" + id,
         "Content-Type": "application/json",
-      },
-      data: {
-        // Provide additional data for the JIRA search. You can modify the JQL to search for whatever you want.
-        jql: "type=Bug AND status=Closed",
       },
     },
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
-      console.log("search result:", searchResult);
       res.json(searchResult);
     }
   );
