@@ -96,7 +96,6 @@ router.get("/search", function (req, res) {
 router.get("/searchItem", (req, res) => {
   var key = "JSESSIONID";
   var id = req.cookies["JSESSIONID"];
-  console.log(id);
 
   // Make the request return the search results, passing the header information including the cookie.
   client.get(
