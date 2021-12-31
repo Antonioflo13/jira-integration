@@ -1,12 +1,18 @@
 const express = require("express");
 const router = express.Router();
-var Client = require("node-rest-client").Client;
+const Client = require("node-rest-client").Client;
 client = new Client();
 
+const username = "";
+const password = "";
+const base64Auth =
+  "Basic " + Buffer.from(username + ":" + password).toString("base64");
+console.log(base64Auth);
+
 router.post("/login", function (req, res) {
-  var loginArgs = {
+  let loginArgs = {
     headers: {
-      Authorization: "Basic YS5mbG9yZTpNaW1tYTEzMDE5Mg==",
+      Authorization: base64Auth,
       "Content-Type": "application/json",
     },
   };
@@ -15,8 +21,8 @@ router.post("/login", function (req, res) {
     loginArgs,
     function (data, response) {
       if (response.statusCode == 200) {
-        var key = response.rawHeaders[23].substring(0, 10);
-        var id = response.rawHeaders[23].substring(11, 43);
+        let key = response.rawHeaders[23].substring(0, 10);
+        let id = response.rawHeaders[23].substring(11, 43);
         res.cookie("JSESSIONID", id, { maxAge: 9000000000, httpOnly: true });
         res.json({ cookie: key + "=" + id });
       } else {
@@ -30,7 +36,7 @@ router.post("/addTicket", function (req, res) {
   const bodyData = {
     headers: {
       //add Basic Auth username e api token
-      Authorization: "Basic YS5mbG9yZTpNaW1tYTEzMDE5Mg==",
+      Authorization: base64Auth,
       "Content-Type": "application/json",
     },
     data: {
@@ -70,9 +76,9 @@ router.post("/addTicket", function (req, res) {
 });
 
 router.get("/search", function (req, res) {
-  var key = "JSESSIONID";
-  var id = req.cookies["JSESSIONID"];
-  var searchArgs = {
+  let key = "JSESSIONID";
+  let id = req.cookies["JSESSIONID"];
+  let searchArgs = {
     headers: {
       cookie: key + "=" + id,
       "Content-Type": "application/json",
@@ -94,8 +100,8 @@ router.get("/search", function (req, res) {
 });
 
 router.get("/searchItem", (req, res) => {
-  var key = "JSESSIONID";
-  var id = req.cookies["JSESSIONID"];
+  let key = "JSESSIONID";
+  let id = req.cookies["JSESSIONID"];
 
   // Make the request return the search results, passing the header information including the cookie.
   client.get(
