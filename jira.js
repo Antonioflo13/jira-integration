@@ -7,7 +7,6 @@ const username = "";
 const password = "";
 const base64Auth =
   "Basic " + Buffer.from(username + ":" + password).toString("base64");
-console.log(base64Auth);
 
 router.post("/login", function (req, res) {
   let loginArgs = {
@@ -35,31 +34,10 @@ router.post("/login", function (req, res) {
 router.post("/addTicket", function (req, res) {
   const bodyData = {
     headers: {
-      //add Basic Auth username e api token
       Authorization: base64Auth,
       "Content-Type": "application/json",
     },
-    data: {
-      fields: {
-        project: {
-          key: "VUE",
-        },
-        summary: "TEST TICKETING",
-        issuetype: {
-          id: "10102",
-        },
-        creator: {
-          name: "a.flore",
-        },
-        assignee: "a.flore",
-        priority: "Miglioramento",
-        description: "Test",
-        reporter: {
-          key: "a.flore",
-          name: "a.flore",
-        },
-      },
-    },
+    data: req.body.data,
   };
   client.post(
     "https://my.octavianlab.com/jira/rest/api/2/issue",
@@ -83,10 +61,7 @@ router.get("/search", function (req, res) {
       cookie: key + "=" + id,
       "Content-Type": "application/json",
     },
-    parameters: {
-      // jql: req.query.jql,
-      maxResults: req.query.maxResults,
-    },
+    parameters: req.query
   };
   // Make the request return the search results, passing the header information including the cookie.
   client.get(
