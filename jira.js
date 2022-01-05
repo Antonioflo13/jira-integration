@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Client = require("node-rest-client").Client;
+const FormData = require('form-data');
+const fs = require('fs');
 client = new Client();
 
-const username = "";
-const password = "";
+const username = "a.flore";
+const password = "Mimma130192";
 const base64Auth =
   "Basic " + Buffer.from(username + ":" + password).toString("base64");
 
@@ -41,6 +43,30 @@ router.post("/addTicket", function (req, res) {
   };
   client.post(
     "https://my.octavianlab.com/jira/rest/api/2/issue",
+    bodyData,
+    function (data, response) {
+      console.log(response.statusCode);
+      if (response.statusCode == 200) {
+        res.json(data);
+      } else {
+        res.json(data);
+      }
+    }
+  );
+});
+
+router.post("/addAttachments", function (req, res) {
+  console.log(req.body);
+
+  const bodyData = {
+    headers: {
+      Authorization: base64Auth,
+      "X-Atlassian-Token": "nocheck",
+    },
+    file: req.body.body,
+  };
+  client.post(
+    `https://my.octavianlab.com/jira/rest/api/2/issue/${req.query.issueKey}/attachments`,
     bodyData,
     function (data, response) {
       console.log(response.statusCode);
