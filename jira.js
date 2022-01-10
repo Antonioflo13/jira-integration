@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const Client = require("node-rest-client").Client;
-const FormData = require('form-data');
-const fs = require('fs');
+const FormData = require("form-data");
+var multer = require("multer")();
+const fs = require("fs");
 client = new Client();
 
 const username = "a.flore";
@@ -55,18 +56,34 @@ router.post("/addTicket", function (req, res) {
   );
 });
 
-router.post("/addAttachments", function (req, res) {
+router.post("/addAttachments", multer.single("file"), function (req, res) {
+  console.log(req.query);
+  console.log(req.file);
   console.log(req.body);
-
+  // const fileRecievedFromClient = req.file;
+  // const formData = new FormData();
+  // formData.append(
+  //   "file",
+  //   fileRecievedFromClient.buffer,
+  //   fileRecievedFromClient.originalname
+  // );
+  // console.log(formData);
+  const filePath = "/Users/antonioflore/Downloads/aP8u1lC.png";
+  const formData = new FormData();
+  const stats = fs.statSync(filePath);
+  const fileSizeInBytes = stats.size;
+  const fileStream = fs.createReadStream(filePath);
+  formData.append("file", fileStream, { knownLength: fileSizeInBytes });
   const bodyData = {
     headers: {
       Authorization: base64Auth,
       "X-Atlassian-Token": "nocheck",
+      "Content-Type": "multipart/form-data; boundary=" + formData["_boundary"],
     },
-    file: req.body.body,
+    data: formData,
   };
   client.post(
-    `https://my.octavianlab.com/jira/rest/api/2/issue/${req.query.issueKey}/attachments`,
+    `https://my.octavianlab.com/jira/rest/api/2/issue/VUE-328/attachments`,
     bodyData,
     function (data, response) {
       console.log(response.statusCode);
@@ -87,7 +104,7 @@ router.get("/search", function (req, res) {
       cookie: key + "=" + id,
       "Content-Type": "application/json",
     },
-    parameters: req.query
+    parameters: req.query,
   };
   // Make the request return the search results, passing the header information including the cookie.
   client.get(

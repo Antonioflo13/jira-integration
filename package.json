@@ -23,6 +23,7 @@
     "cors": "^2.8.5",
     "express": "^4.17.2",
     "jira-connector": "^3.1.0",
+    "multer": "^1.4.4",
     "node-rest-client": "^3.1.0",
     "tough-cookie-filestore": "^0.0.1"
   }
