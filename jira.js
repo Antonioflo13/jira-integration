@@ -19,7 +19,7 @@ router.post("/addTicket", function (req, res) {
     data: req.body.data,
   };
   client.post(
-    jiraUrl + "/jira/rest/api/2/issue",
+    jiraUrl + "/rest/api/2/issue",
     bodyData,
     function (data, response) {
       console.log(response.statusCode);
@@ -108,6 +108,57 @@ router.get("/searchComponents", function (req, res) {
   );
 });
 
+router.get("/searchIssueTypes", function (req, res) {
+  let searchArgs = {
+    headers: {
+      Authorization: base64Auth,
+      "Content-Type": "application/json",
+    },
+  };
+  client.get(
+    jiraUrl + `/rest/api/2/project/${project}`,
+    searchArgs,
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      res.json(searchResult);
+    }
+  );
+});
+
+router.get("/searchPriority", function (req, res) {
+  let searchArgs = {
+    headers: {
+      Authorization: base64Auth,
+      "Content-Type": "application/json",
+    },
+  };
+  client.get(
+    jiraUrl + `/rest/api/2/priority`,
+    searchArgs,
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      res.json(searchResult);
+    }
+  );
+});
+
+router.get("/searchStatuses", function (req, res) {
+  let searchArgs = {
+    headers: {
+      Authorization: base64Auth,
+      "Content-Type": "application/json",
+    },
+  };
+  client.get(
+    jiraUrl + `/rest/api/2/project/${project}/statuses`,
+    searchArgs,
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      res.json(searchResult);
+    }
+  );
+});
+
 router.get("/searchItem", (req, res) => {
 
   client.get(
@@ -118,6 +169,25 @@ router.get("/searchItem", (req, res) => {
         "Content-Type": "application/json",
       },
     },
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      res.json(searchResult);
+    }
+  );
+});
+
+router.post("/addComment", function (req, res) {
+  console.log(req.body);
+  let searchArgs = {
+    headers: {
+      Authorization: base64Auth,
+      "Content-Type": "application/json",
+    },
+    data: req.body.data,
+  };
+  client.post(
+    jiraUrl + `/rest/api/2/issue/${req.body.params.issueKey}/comment`,
+    searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
       res.json(searchResult);
