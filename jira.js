@@ -4,6 +4,8 @@ const Client = require("node-rest-client").Client;
 const FormData = require("form-data");
 const multer = require("multer")();
 const fs = require("fs");
+const html2JiraMarkup = require("html-2-jira-markup");
+
 client = new Client();
 
 const jiraUrl = "https://my.octavianlab.com/jira";
@@ -162,7 +164,7 @@ router.get("/searchStatuses", function (req, res) {
 router.get("/searchItem", (req, res) => {
 
   client.get(
-    jiraUrl + `/rest/api/2/${req.query.type}/${req.query.id}`,
+    jiraUrl + `/rest/api/2/${req.query.type}/${req.query.id}?expand=names,renderedFields`,
     {
       headers: {
         Authorization: base64Auth,
