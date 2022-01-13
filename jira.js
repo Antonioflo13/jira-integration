@@ -87,7 +87,7 @@ router.get("/search", function (req, res) {
     searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(searchResult);
     }
   );
 });
@@ -206,6 +206,25 @@ router.post("/addComment", function (req, res) {
   };
   client.post(
     jiraUrl + `/rest/api/2/issue/${req.body.params.issueKey}/comment`,
+    searchArgs,
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      res.json(searchResult);
+    }
+  );
+});
+
+router.post("/changeTicketStatus", function (req, res) {
+  console.log(req.body.params.issueKey);
+  let searchArgs = {
+    headers: {
+      Authorization: base64Auth,
+      "Content-Type": "application/json",
+    },
+    data: req.body.data,
+  };
+  client.post(
+    jiraUrl + `/rest/api/2/issue/${req.body.params.issueKey}/transitions`,
     searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
