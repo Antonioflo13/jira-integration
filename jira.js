@@ -4,7 +4,6 @@ const Client = require("node-rest-client").Client;
 const FormData = require("form-data");
 const multer = require("multer")();
 const fs = require("fs");
-const html2JiraMarkup = require("html-2-jira-markup");
 
 client = new Client();
 
@@ -85,6 +84,24 @@ router.get("/search", function (req, res) {
   };
   client.get(
     jiraUrl + `/rest/api/2/search`,
+    searchArgs,
+    function (searchResult, response) {
+      console.log("status code:", response.statusCode);
+      res.json(searchResult);
+    }
+  );
+});
+
+router.get("/downloadAttachment", function (req, res) {
+  const attachmentLink = req.query.link;
+  let searchArgs = {
+    headers: {
+      Authorization: base64Auth,
+      "Content-Type": "application/json",
+    },
+  };
+  client.get(
+    attachmentLink,
     searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
