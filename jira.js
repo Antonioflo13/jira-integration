@@ -17,13 +17,13 @@ router.post("/addTicket", function (req, res) {
       Authorization: base64Auth,
       "Content-Type": "application/json",
     },
-    data: req.body.data,
+    data: req.body.params.data,
   };
   client.post(
     jiraUrl + "/rest/api/2/issue",
     bodyData,
     function (data, response) {
-      console.log(response.statusCode);
+      console.log("status code: addTicket", response.statusCode);
       if (response.statusCode == 200) {
         res.json(data);
       } else {
@@ -63,7 +63,7 @@ router.post("/addAttachments", multer.single("file"), function (req, res) {
     jiraUrl + `/rest/api/2/issue/VUE-328/attachments`,
     bodyData,
     function (data, response) {
-      console.log(response.statusCode);
+      console.log("status code: addAttachments", response.statusCode);
       if (response.statusCode == 200) {
         res.json(data);
       } else {
@@ -86,7 +86,7 @@ router.get("/search", function (req, res) {
     jiraUrl + `/rest/api/2/search`,
     searchArgs,
     function (searchResult, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: search", response.statusCode);
       res.status(response.statusCode).json(searchResult);
     }
   );
@@ -104,7 +104,7 @@ router.get("/downloadAttachment", function (req, res) {
     attachmentLink,
     bodyData,
     function (data, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: downloadAttachment", response.statusCode);
       res.status(response.statusCode).json(data);
     }
   );
@@ -121,7 +121,7 @@ router.get("/searchComponents", function (req, res) {
     jiraUrl + `/rest/api/2/project/${project}/components`,
     searchArgs,
     function (searchResult, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: searchComponents", response.statusCode);
       res.status(response.statusCode).json(searchResult);
     }
   );
@@ -138,7 +138,7 @@ router.get("/searchIssueTypes", function (req, res) {
     jiraUrl + `/rest/api/2/project/${project}`,
     searchArgs,
     function (searchResult, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: searchIssueTypes", response.statusCode);
       res.status(response.statusCode).json(searchResult);
     }
   );
@@ -155,7 +155,7 @@ router.get("/searchPriority", function (req, res) {
     jiraUrl + `/rest/api/2/priority`,
     searchArgs,
     function (searchResult, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: searchPriority", response.statusCode);
       res.status(response.statusCode).json(searchResult);
     }
   );
@@ -172,7 +172,7 @@ router.get("/searchStatuses", function (req, res) {
     jiraUrl + `/rest/api/2/project/${project}/statuses`,
     searchArgs,
     function (searchResult, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: searchStatuses", response.statusCode);
       res.status(response.statusCode).json(searchResult);
     }
   );
@@ -188,7 +188,7 @@ router.get("/searchItem", (req, res) => {
       },
     },
     function (searchResult, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: searchItem", response.statusCode);
       res.status(response.statusCode).json(searchResult);
     }
   );
@@ -201,13 +201,13 @@ router.post("/addComment", function (req, res) {
       Authorization: base64Auth,
       "Content-Type": "application/json",
     },
-    data: req.body.data,
+    data: req.body.params.data,
   };
   client.post(
     jiraUrl + `/rest/api/2/issue/${req.body.params.issueKey}/comment`,
     bodyData,
     function (data, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: addComment", response.statusCode);
       res.status(response.statusCode).json(data);
     }
   );
@@ -219,13 +219,13 @@ router.post("/changeTicketStatus", function (req, res) {
       Authorization: base64Auth,
       "Content-Type": "application/json",
     },
-    data: req.body.data,
+    data: req.body.params.data,
   };
   client.post(
     jiraUrl + `/rest/api/2/issue/${req.body.params.issueKey}/transitions`,
     bodyData,
     function (data, response) {
-      console.log("status code:", response.statusCode);
+      console.log("status code: changeTicketStatus", response.statusCode);
       res.status(response.statusCode).json(data);
     }
   );
