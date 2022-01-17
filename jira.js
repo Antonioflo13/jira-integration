@@ -27,7 +27,7 @@ router.post("/addTicket", function (req, res) {
       if (response.statusCode == 200) {
         res.json(data);
       } else {
-        res.json(data);
+        res.status(response.statusCode).json(data);
       }
     }
   );
@@ -67,7 +67,7 @@ router.post("/addAttachments", multer.single("file"), function (req, res) {
       if (response.statusCode == 200) {
         res.json(data);
       } else {
-        res.json(data);
+        res.status(response.statusCode).json(data);
       }
     }
   );
@@ -94,7 +94,7 @@ router.get("/search", function (req, res) {
 
 router.get("/downloadAttachment", function (req, res) {
   const attachmentLink = req.query.link;
-  let searchArgs = {
+  let bodyData = {
     headers: {
       Authorization: base64Auth,
       "Content-Type": "application/json",
@@ -102,10 +102,10 @@ router.get("/downloadAttachment", function (req, res) {
   };
   client.get(
     attachmentLink,
-    searchArgs,
-    function (searchResult, response) {
+    bodyData,
+    function (data, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(data);
     }
   );
 });
@@ -122,7 +122,7 @@ router.get("/searchComponents", function (req, res) {
     searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(searchResult);
     }
   );
 });
@@ -139,7 +139,7 @@ router.get("/searchIssueTypes", function (req, res) {
     searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(searchResult);
     }
   );
 });
@@ -156,7 +156,7 @@ router.get("/searchPriority", function (req, res) {
     searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(searchResult);
     }
   );
 });
@@ -173,15 +173,14 @@ router.get("/searchStatuses", function (req, res) {
     searchArgs,
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(searchResult);
     }
   );
 });
 
 router.get("/searchItem", (req, res) => {
-
   client.get(
-    jiraUrl + `/rest/api/2/${req.query.type}/${req.query.id}?expand=names,renderedFields`,
+    jiraUrl + `/rest/api/2/issue/${req.query.id}?expand=names,renderedFields`,
     {
       headers: {
         Authorization: base64Auth,
@@ -190,14 +189,14 @@ router.get("/searchItem", (req, res) => {
     },
     function (searchResult, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(searchResult);
     }
   );
 });
 
 router.post("/addComment", function (req, res) {
   console.log(req.body);
-  let searchArgs = {
+  let bodyData = {
     headers: {
       Authorization: base64Auth,
       "Content-Type": "application/json",
@@ -206,17 +205,16 @@ router.post("/addComment", function (req, res) {
   };
   client.post(
     jiraUrl + `/rest/api/2/issue/${req.body.params.issueKey}/comment`,
-    searchArgs,
-    function (searchResult, response) {
+    bodyData,
+    function (data, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(data);
     }
   );
 });
 
 router.post("/changeTicketStatus", function (req, res) {
-  console.log(req.body.params.issueKey);
-  let searchArgs = {
+  let bodyData = {
     headers: {
       Authorization: base64Auth,
       "Content-Type": "application/json",
@@ -225,10 +223,10 @@ router.post("/changeTicketStatus", function (req, res) {
   };
   client.post(
     jiraUrl + `/rest/api/2/issue/${req.body.params.issueKey}/transitions`,
-    searchArgs,
-    function (searchResult, response) {
+    bodyData,
+    function (data, response) {
       console.log("status code:", response.statusCode);
-      res.json(searchResult);
+      res.status(response.statusCode).json(data);
     }
   );
 });
