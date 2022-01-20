@@ -188,8 +188,17 @@ router.get("/searchItem", (req, res) => {
       },
     },
     function (searchResult, response) {
-      console.log("status code: searchItem", response.statusCode);
-      res.status(response.statusCode).json(searchResult);
+      try {
+        console.log("status code: searchItem", response.statusCode);
+        let i = 0;
+        for (const el of searchResult.renderedFields.comment.comments) {
+          searchResult.fields.comment.comments[i].bodyHtml = el.body;
+          i++;
+        }
+        res.status(response.statusCode).json(searchResult);
+      } catch (error) {
+        res.status(response.statusCode = 500).json(null);
+      }
     }
   );
 });
