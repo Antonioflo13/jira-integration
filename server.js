@@ -1,3 +1,5 @@
+const serverless = require('serverless-http');
+
 const http = require("http");
 const express = require("express");
 const cors = require("cors");
@@ -14,5 +16,7 @@ app.use("/", jiraLogin);
 const server = http.createServer(app);
 const port = 3000;
 server.listen(port);
+module.exports.handler = serverless(app);
+
 
 console.debug("Server listening on port " + port);
