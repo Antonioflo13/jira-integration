@@ -1,6 +1,6 @@
 # Jira Integration
 
-Server per intregrazione Jira Server platform REST API 8.13.15
+Jira Server REST API platform 8.13.15
 
 # Install
 
